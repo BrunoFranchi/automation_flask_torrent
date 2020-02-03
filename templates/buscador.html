@@ -11,13 +11,16 @@
             <thead class="thead-default">
                 <tr>
                     <th> Encontrados</th>
+                    <th> SE </th>
                 </tr>
+
             </thead>
             <thead>
             <tbody>
             {% for filme in lista  %}
                 <tr>
-                    <td>{{filme}}</td>
+                    <td>{{filme.nome}}</td>
+                    <td>{{filme.se}}</td>
                 </tr>
             {% endfor %}
             </tbody>
