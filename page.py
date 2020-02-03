@@ -10,9 +10,11 @@ endereco = []
 
 
 class Torrent():
-    def __init__(self, nome, se=None):
+    def __init__(self, nome, se=None,id=None):
         self.nome = nome
         self.se = se
+        self.id = id
+
 
 
 @app.route('/')
@@ -44,7 +46,7 @@ def busca():
         parcial_xpath = f'//*[@id="searchResult"]/tbody/tr[{c}]/td[2]/div/a'
         se = f'//*[@id="searchResult"]/tbody/tr[{c}]/td[3]'
         try:
-            result = Torrent(str(c).upper() + ' -- ' + driver.find_element_by_xpath(parcial_xpath).text,
+            result = Torrent(c,driver.find_element_by_xpath(parcial_xpath).text,
                              driver.find_element_by_xpath(se).text)
             list_obj.append(result)
         except:
@@ -73,6 +75,5 @@ def selecionar():
         pyautogui.press('tab')
     pyautogui.press('enter')
     return render_template('formato.html')
-
 
 app.run(debug=True)
