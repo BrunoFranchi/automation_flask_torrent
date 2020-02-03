@@ -1,8 +1,18 @@
-from flask import Flask, render_template, request, flash, redirect, session
+from flask import Flask, render_template, request, flash, redirect, session,url_for
 from selenium import webdriver
-app = Flask(__name__)
+import pyautogui
+import time
 
+
+app = Flask(__name__)
+app.secret_key = 'application'
 endereco = []
+
+
+class Torrent():
+    def __init__(self, nome, se=None):
+        self.nome = nome
+        self.se = se
 
 
 @app.route('/')
@@ -12,48 +22,56 @@ def inicio():
 
 @app.route('/buscar', methods=['POST', ])
 def busca():
+
     nome = request.form['nome']
     driver = webdriver.Chrome(executable_path='chromedriver.exe')
     driver.implicitly_wait(10)
-    driver.get('http://www.filmesviatorrents.info/')
+    driver.get('https://thepiratebay.org/')
     driver.implicitly_wait(3)
-    driver.find_element_by_name('s').click()
-    write = driver.find_element_by_name('s')
+    write = driver.find_element_by_xpath('//*[@id="inp"]/input')
     write.send_keys(nome)
-    driver.find_element_by_name('s').submit()
+    driver.find_element_by_xpath('//*[@id="subm"]/input[1]').click()
+    driver.implicitly_wait(2)
+    erro = driver.find_element_by_xpath('/html/body/h2').text
+    if 'Try adding an asterisk' in erro:
+        flash('Nenhum resultado encntrado! Tente novamente.')
+        driver.close()
+        return redirect('/')
     url = driver.current_url
     endereco.append(url)
-    driver.implicitly_wait(3)
-    results = []
-    for c in range(5, 20):
-        parcial_xpath = f'//*[@id="mainWrapper"]/div/div[{c}]/h2/a'
-
+    list_obj = []
+    for c in range(1, 11):
+        parcial_xpath = f'//*[@id="searchResult"]/tbody/tr[{c}]/td[2]/div/a'
+        se = f'//*[@id="searchResult"]/tbody/tr[{c}]/td[3]'
         try:
-            results.append(str(c).upper() + ' -- ' + driver.find_element_by_xpath(parcial_xpath).text)
+            result = Torrent(str(c).upper() + ' -- ' + driver.find_element_by_xpath(parcial_xpath).text,
+                             driver.find_element_by_xpath(se).text)
+            list_obj.append(result)
         except:
             print('--')
     driver.close()
-    return render_template('buscador.html', lista=results)
+    return render_template('buscador.html', lista=list_obj)
 
 
 @app.route('/selecionar', methods=['POST', ])
 def selecionar():
     numero_escolhido = request.form['nome']
     driver = webdriver.Chrome(executable_path='chromedriver.exe')
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(3)
     driver.get(endereco[0])
-    driver.find_element_by_xpath(f'//*[@id="mainWrapper"]/div/div[{numero_escolhido}]/h2/a').click()
-    driver.implicitly_wait(2)
-    driver.find_element_by_xpath('//div/div/a/img').click()
-    driver.implicitly_wait(10)
-    driver.find_element_by_xpath('//*[@id="botao"]').click()
-    driver.implicitly_wait(15)
-    print('cliquei')
-    driver.find_element_by_xpath('//*[@id="botao2"]').click()
-    driver.implicitly_wait(2)
-    print('cliquei')
-
-    print('encontrei')
+    driver.find_element_by_xpath(f'//*[@id="searchResult"]/tbody/tr[{numero_escolhido}]/td[2]/div/a').click()
+    time.sleep(10)
+    pyautogui.hotkey("ctrl", "w")
+    driver.find_element_by_xpath('//*[@id="details"]/div[3]/div[1]/a[1]').click()
+    time.sleep(10)
+    pyautogui.hotkey("ctrl", "w")
+    pyautogui.press('left')
+    pyautogui.press('enter')
+    driver.close()
+    time.sleep(15)
+    for tab in range(1, 52):
+        pyautogui.press('tab')
+    pyautogui.press('enter')
     return render_template('formato.html')
 
 
