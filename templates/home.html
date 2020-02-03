@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Faça sua busca</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css')}}">
+</head>
+<body>
+ <form action="/buscar" method="post">
+        <fieldset>
+          <div class="form-group">
+            <label for="movie">Filme</label>
+            <input type="text" id="movie" name="nome" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-primary btn-salvar">Buscar</button>
+        </fieldset>
+      </form>
+</body>
+</html>

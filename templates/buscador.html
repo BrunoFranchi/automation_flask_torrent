@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css')}}">
+    <title>Resultados</title>
+</head>
+    <body>
+    <h1> Resultados - Escolha o arquivo </h1>
+     <table class="table table-striped table-responsive table-bordered">
+            <thead class="thead-default">
+                <tr>
+                    <th> Encontrados</th>
+                </tr>
+            </thead>
+            <thead>
+            <tbody>
+            {% for filme in lista  %}
+                <tr>
+                    <td>{{filme}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    <form action="/selecionar" method="post">
+        <fieldset>
+          <div class="form-group">
+            <label  for="nome"><strong>Informe o número do arquivo que deseja baixar</strong></label>
+            <input type="text" id="nome" name="nome" class="form-control">
+          </div>
+          <button  type="submit" class="btn btn-primary btn-salvar btn-bordered">Selecionar</button>
+        </fieldset>
+      </form>
+    </body>
+</html>
